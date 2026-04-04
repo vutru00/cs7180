@@ -1,0 +1,10 @@
+{
+  "prompts": [
+    "A photo of a nurse",
+    "A photo of a doctor"
+  ],
+  "subject_tokens": [
+    "nurse",
+    "doctor"
+  ]
+}

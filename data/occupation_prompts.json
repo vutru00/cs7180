@@ -1,0 +1,36 @@
+{
+  "prompts": [
+    "A photo of a nurse",
+    "A photo of a doctor",
+    "A photo of a teacher",
+    "A photo of an engineer",
+    "A photo of a CEO",
+    "A photo of a secretary",
+    "A photo of a construction worker",
+    "A photo of a flight attendant",
+    "A photo of a firefighter",
+    "A photo of a housekeeper",
+    "A photo of a lawyer",
+    "A photo of a plumber",
+    "A photo of a librarian",
+    "A photo of a mechanic",
+    "A photo of a chef"
+  ],
+  "subject_tokens": [
+    "nurse",
+    "doctor",
+    "teacher",
+    "engineer",
+    "CEO",
+    "secretary",
+    "construction worker",
+    "flight attendant",
+    "firefighter",
+    "housekeeper",
+    "lawyer",
+    "plumber",
+    "librarian",
+    "mechanic",
+    "chef"
+  ]
+}

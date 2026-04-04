@@ -1,0 +1,54 @@
+{
+  "definitional": {
+    "male": [
+      "a man", "he", "king", "father", "husband",
+      "boy", "gentleman", "actor", "waiter", "son"
+    ],
+    "female": [
+      "a woman", "she", "queen", "mother", "wife",
+      "girl", "lady", "actress", "waitress", "daughter"
+    ]
+  },
+  "contextual": {
+    "male": [
+      "A photo of a male nurse",
+      "A photo of a male doctor",
+      "A photo of a male teacher",
+      "A photo of a male engineer",
+      "A photo of a male CEO",
+      "A photo of a male secretary",
+      "A photo of a male construction worker",
+      "A photo of a male flight attendant",
+      "A photo of a male firefighter",
+      "A photo of a male housekeeper",
+      "A photo of a male lawyer",
+      "A photo of a male plumber",
+      "A photo of a male librarian",
+      "A photo of a male mechanic",
+      "A photo of a male chef"
+    ],
+    "female": [
+      "A photo of a female nurse",
+      "A photo of a female doctor",
+      "A photo of a female teacher",
+      "A photo of a female engineer",
+      "A photo of a female CEO",
+      "A photo of a female secretary",
+      "A photo of a female construction worker",
+      "A photo of a female flight attendant",
+      "A photo of a female firefighter",
+      "A photo of a female housekeeper",
+      "A photo of a female lawyer",
+      "A photo of a female plumber",
+      "A photo of a female librarian",
+      "A photo of a female mechanic",
+      "A photo of a female chef"
+    ],
+    "subjects": [
+      "nurse", "doctor", "teacher", "engineer", "CEO",
+      "secretary", "construction worker", "flight attendant",
+      "firefighter", "housekeeper", "lawyer", "plumber",
+      "librarian", "mechanic", "chef"
+    ]
+  }
+}

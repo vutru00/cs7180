@@ -215,4 +215,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-models/
+models/*.pt
+models/*.pth
+models/*.pth.tar
+models/*.ckpt
+results/
