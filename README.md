@@ -232,18 +232,110 @@ python scripts/experiment_swap_activations.py --target both --n-images 5
 
 ---
 
+## Top-Layer Swap with Images
+
+**`scripts/experiment_swap_top_layers.py`**
+
+Reads results from a previous full swap experiment, picks the top-k layers by flip score, then re-runs swaps saving all generated images. Supports `--windows` to test whether gender is encoded in early, mid, or late denoising timesteps.
+
+```bash
+# Top 5 layers, all timesteps
+python scripts/experiment_swap_top_layers.py \
+    --swap-results results/swap_experiment/swap_results.json \
+    --top-k 5 --n-images 5 \
+    --output-dir results/swap_top_layers
+
+# With timestep windows (early/mid/late)
+python scripts/experiment_swap_top_layers.py \
+    --top-k 5 --n-images 3 --windows \
+    --output-dir results/swap_top_layers_windows
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--swap-results` | Previous swap_results.json | `results/swap_experiment/swap_results.json` |
+| `--top-k` | Number of top layers | `5` |
+| `--windows` | Also run early/mid/late windows | off |
+| `--n-images` | Seeds to average | `5` |
+| `--output-dir` | Output directory | `results/swap_top_layers/` |
+
+**Output:**
+- `images/` — all individual PNGs
+- `grids/seed_*.png` — per-seed grid (rows = male/female, columns = baseline + each layer swap)
+- `window_comparison/` — per-layer window figures + grouped bar chart (only with `--windows`)
+- `scores.json` — raw gender/age scores
+
+---
+
+## Token-Level Activation Patching
+
+**`scripts/experiment_token_patch.py`**
+
+Tests whether patching a single token's activation at a specific text encoder layer can transfer gender. Records activations for "male nurse", "female nurse", and "nurse", then patches the "nurse" token's activation between prompts.
+
+```bash
+python scripts/experiment_token_patch.py --n-images 5
+python scripts/experiment_token_patch.py --layer text_model.encoder.layers.0.mlp
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--layer` | Text encoder layer to patch | `text_model.encoder.layers.0.self_attn` |
+| `--n-images` | Seeds per condition | `5` |
+| `--output-dir` | Output directory | `results/token_patch_experiment/` |
+
+**Conditions tested:** neutral baseline, male baseline, female baseline, neutral+male nurse token, male+neutral nurse token, neutral+female nurse token, female+neutral nurse token.
+
+**Output:** `images/`, `grid.png` (rows = seeds, columns = all 7 conditions with gender labels), `scores.json`.
+
+---
+
+## Embedding Steering (Binary Search)
+
+**`scripts/experiment_embedding_steer.py`**
+
+Finds a steering weight `w` that achieves gender parity for a biased prompt. Records the activation at a text encoder layer for "male nurse" and "female nurse" at the gender token position, then for each candidate `w`, hooks that layer to replace the gender token's activation with `w * delta` where `delta = act_male - act_female`. Runs two modes:
+
+- **Mode A:** Base prompt "A photo of a female nurse" — replaces "female" token's activation
+- **Mode B:** Base prompt "A photo of a \<\|endoftext\|\> nurse" — replaces the [UNK] placeholder's activation
+
+Binary search on `w` in [0, 1] over 5 iterations, 20 images each.
+
+```bash
+python scripts/experiment_embedding_steer.py
+python scripts/experiment_embedding_steer.py --n-images 20 --iterations 5
+python scripts/experiment_embedding_steer.py --layer text_model.encoder.layers.0.mlp
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--layer` | Text encoder layer for recording and replacement | `text_model.encoder.layers.0.self_attn` |
+| `--n-images` | Images per weight evaluation | `20` |
+| `--iterations` | Binary search iterations | `5` |
+| `--output-dir` | Output directory | `results/embedding_steer/` |
+
+**Output:**
+- `mode_A_female/images/` and `mode_B_unk/images/` — images for each `w` value
+- `search_log.json` — per-iteration log for both modes
+- `summary.png` — convergence curves + baseline vs best images for both modes
+
+---
+
 ## Typical Workflow
 
 ```
-Phase 1: run_tracing.py          →  NIE JSON
+Phase 1: run_tracing.py               →  NIE JSON
               ↓
-         extract_top_layers.py    →  top_causal_layers.json
+         extract_top_layers.py         →  top_causal_layers.json
               ↓
-Phase 2: run_dynamic.py           →  timestep-resolved NIE JSON
+Phase 2: run_dynamic.py                →  timestep-resolved NIE JSON
               ↓
-Phase 3: run_intervention.py      →  CSV + visualizations
+Phase 3: run_intervention.py           →  CSV + visualizations
 
 Diagnostics (run independently):
-  validate_pca_gender.py          →  PCA validation plots
-  experiment_swap_activations.py  →  layer-level gender mediation
+  validate_pca_gender.py               →  PCA validation plots
+  experiment_swap_activations.py       →  layer-level gender mediation (all layers)
+  experiment_swap_top_layers.py        →  top-layer swaps with images + timestep windows
+  experiment_token_patch.py            →  token-level patching between prompts
+  experiment_embedding_steer.py        →  binary-search steering weight for gender parity
 ```
